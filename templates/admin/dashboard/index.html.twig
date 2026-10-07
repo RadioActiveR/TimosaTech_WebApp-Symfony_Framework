@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block body_class %}admin-body{% endblock %}
+
+{# Stops Symfony's default app.css (the skyblue background) and app.js from loading on this page #}
+{% block importmap %}{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('assets/css/variables.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/master.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/admin-portal.css') }}">
+{% endblock %}
+
+{% block body %}
+  <div class="admin-layout container">
+    <nav class="admin-tabs-nav">
+      {% for key, label in tabs %}
+        <a href="{{ path('admin_dashboard', {tab: key}) }}"
+           class="admin-tab-link {{ active_tab == key ? 'active' : '' }}">
+          {{ label }}
+        </a>
+      {% endfor %}
+    </nav>
+
+    <main class="admin-content-area" id="adminContentArea">
+
+      {# Flash messages: replaces $message / $error and $_SESSION['admin_flash_*'] #}
+      {% for msg in app.flashes('success') %}
+        <p style="color: #0ADDEE; margin-bottom: 15px;">{{ msg }}</p>
+      {% endfor %}
+      {% for msg in app.flashes('error') %}
+        <p style="color: #f87171; margin-bottom: 15px;">{{ msg }}</p>
+      {% endfor %}
+
+      {% if active_tab == 'overview' %}
+        {% include 'admin/tabs/overview.html.twig' %}
+      {% else %}
+        {# Tabs not ported yet fall back to the same placeholder your old file had #}
+        <section class="admin-panel">
+          <h2>{{ tabs[active_tab] }}</h2>
+          <p class="admin-panel-placeholder">{{ tabs[active_tab] }} panel layout will go here.</p>
+        </section>
+      {% endif %}
+
+    </main>
+  </div>
+{% endblock %}

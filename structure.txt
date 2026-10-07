@@ -1,0 +1,52 @@
+Folder PATH listing for volume OS
+Volume serial number is 90FF-308E
+C:\XAMPP\PHP\TIMOSATECH\SRC
+|   Kernel.php
+|   
++---Controller
+|   |   .gitignore
+|   |   
+|   \---Admin
+|           DashboardController.php
+|           
++---Entity
+|       .gitignore
+|       
+\---Repository
+        .gitignore
+        
+Folder PATH listing for volume OS
+Volume serial number is 90FF-308E
+C:\XAMPP\PHP\TIMOSATECH\TEMPLATES
+|   base.html.twig
+|   
+\---admin
+    +---dashboard
+    |       index.html.twig
+    |       
+    \---tabs
+            overview.html.twig
+            
+Folder PATH listing for volume OS
+Volume serial number is 90FF-308E
+C:\XAMPP\PHP\TIMOSATECH\PUBLIC
+\---assets
+    \---css
+ Volume in drive C is OS
+ Volume Serial Number is 90FF-308E
+
+ Directory of C:\xampp\php\TimosaTech\public\assets\css
+
+06/10/2026  09:33 am    <DIR>          .
+06/10/2026  09:31 am    <DIR>          ..
+17/09/2026  02:09 pm            16,265 admin-portal.css
+10/09/2026  07:51 pm                 0 master.css
+15/09/2026  02:36 am            33,246 styles.css
+10/09/2026  01:51 pm               717 variables.css
+               4 File(s)         50,228 bytes
+               2 Dir(s)  88,987,058,176 bytes free
+ Volume in drive C is OS
+ Volume Serial Number is 90FF-308E
+
+ Directory of C:\xampp\php\TimosaTech\public\assets
+

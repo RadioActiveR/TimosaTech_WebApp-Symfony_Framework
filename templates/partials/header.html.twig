@@ -1,0 +1,139 @@
+{#
+  Replaces components/header.php (the navbar part).
+  The <head>/<body> parts now live in base.html.twig.
+
+  Variables it reads (all optional, the controller passes what it has):
+    current_page   'admin', 'profile', 'checkout', 'home', 'shop', ...
+    user_name      shown in the "Hi, ..." greeting
+    is_logged_in   true/false
+    is_admin       true/false
+    cart_count     number
+    notif_role     'admin' | 'user' | null     (bell is hidden while null)
+    notif_unread   number
+#}
+
+{# While pages are being ported, links to the old XAMPP site still work. Change later. #}
+{% set legacy = 'http://localhost/TimosaTech' %}
+
+{% set current_page = current_page|default('') %}
+{% set is_admin_page = (current_page == 'admin') %}
+{% set is_profile_page = (current_page == 'profile') %}
+{% set is_minimal_header = (current_page in ['order_confirmation', 'checkout']) %}
+
+{% set raw_name = user_name|default('User') %}
+{% set display_name = raw_name|length > 13 ? (raw_name|trim|split(' ')|first) : raw_name %}
+
+{% set notif_role = notif_role|default(null) %}
+{% set notif_unread = notif_unread|default(0) %}
+{% set cart_count = cart_count|default(0) %}
+
+<!-- NAVBAR -->
+<header class="navbar {{ is_admin_page ? 'admin-navbar' : '' }}">
+  <div class="container {{ is_admin_page ? 'admin-nav-container' : '' }}">
+
+    {% if is_admin_page %}
+      <!-- ADMIN BRANDING -->
+      <div class="admin-brand">
+        <a href="{{ legacy }}/pages/homepage.php" class="logo">
+          <img class="img-logo" src="{{ asset('assets/images/TimosaTechLogo.png') }}" alt="Logo" onerror="this.style.display='none'">
+          <span class="logoname1">TIMOSA</span><span class="logoname2">TECH</span>
+        </a>
+        <span class="admin-badge">ADMINISTRATOR PORTAL</span>
+      </div>
+    {% else %}
+      <!-- STANDARD BRANDING -->
+      <div class="logo">
+        <img class="img-logo" src="{{ asset('assets/images/TimosaTechLogo.png') }}" alt="Timosa Tech Logo" onerror="this.style.display='none'">
+        <a class="logoname1" href="{{ legacy }}/index.php">TIMOSA</a><a class="logoname2" href="{{ legacy }}/index.php">TECH</a>
+      </div>
+
+      <!-- NAVIGATION LINKS -->
+      {% if not is_minimal_header and not is_profile_page %}
+        {% set nav_items = {
+          home:     {label: 'Home',     href: legacy ~ '/pages/homepage.php'},
+          shop:     {label: 'Shop',     href: legacy ~ '/pages/shop.php'},
+          services: {label: 'Services', href: legacy ~ '/pages/services.php'},
+          about:    {label: 'About',    href: legacy ~ '/pages/about.php'},
+          contact:  {label: 'Contact',  href: legacy ~ '/pages/contact.php'},
+        } %}
+        <nav class="nav-links">
+          {% for key, item in nav_items %}
+            <a href="{{ item.href }}"{% if current_page == key %} class="active"{% endif %}>{{ item.label }}</a>
+          {% endfor %}
+        </nav>
+      {% endif %}
+    {% endif %}
+
+    <!-- USER ACTIONS & CTA SECTION -->
+    {% if not is_minimal_header %}
+      <div class="nav-cta">
+        {% if is_logged_in|default(false) or is_admin_page or is_profile_page %}
+
+          <span class="nav-greeting">Hi, {{ display_name }}</span>
+
+          {% if is_admin_page %}
+            <!-- Admin View Actions -->
+            <a href="{{ legacy }}/pages/homepage.php" class="btn btn-outline admin-nav-btn">View Main Site</a>
+          {% else %}
+            <!-- Standard View Admin Button (hidden on profile page) -->
+            {% if is_admin|default(false) and not is_profile_page %}
+              <a href="{{ path('admin_dashboard') }}" class="btn btn-outline admin-nav-btn">Admin Portal</a>
+            {% endif %}
+
+            <!-- Cart Button -->
+            <button type="button" class="btn btn-outline cart-nav-btn" data-open-cart>
+              {{ icon('cart') }}<span class="cart-count-badge" style="{{ cart_count == 0 ? 'display:none;' : '' }}">{{ cart_count }}</span>
+            </button>
+          {% endif %}
+
+          {% if notif_role %}
+            <!-- Notification Bell -->
+            <div class="notif-widget" id="notifWidget">
+              <button type="button" class="btn btn-outline notif-bell-btn" id="notifBellBtn"
+                      aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="notif-count-badge" id="notifCountBadge" style="{{ notif_unread == 0 ? 'display:none;' : '' }}">{{ notif_unread > 99 ? '99+' : notif_unread }}</span>
+              </button>
+              <div class="notif-panel" id="notifPanel">
+                <div class="notif-panel-header">
+                  <span>Notifications</span>
+                  <button type="button" class="notif-mark-all-btn" id="notifMarkAllBtn">Mark all read</button>
+                </div>
+                <div class="notif-list" id="notifList">
+                  <p class="notif-empty">Loading…</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if is_profile_page %}
+            <!-- Logout (profile page only) -->
+            <a href="{{ legacy }}/includes/handlers/logout-handler.php" class="btn btn-outline logout-btn">Logout</a>
+          {% else %}
+            <!-- Circular profile button -->
+            <a href="{{ legacy }}/pages/profile.php" class="btn btn-outline profile-circle-btn" title="My Profile" aria-label="My Profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </a>
+          {% endif %}
+
+        {% else %}
+          <a href="#" class="btn btn-outline" data-open-auth="login">Log In</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</header>
+
+{#
+  TODO (ported later, they need files we haven't converted yet):
+    - notifications.js + window.notifRole / window.notifEndpoint  (when notif_role is set)
+    - chat widget + chat-widget.js     (every page except admin and contact)
+    - site-controls-watcher.js         (every page except admin)
+#}
